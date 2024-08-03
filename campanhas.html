@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Campanhas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin: 10px;
+            overflow: hidden;
+            transition: transform 0.2s;
+            width: 16%; /* Ajuste para 6 cards por linha */
+        }
+        .card:hover {
+            transform: scale(1.05);
+        }
+        .card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+        }
+        .card-body {
+            padding: 15px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .card-title {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        .card-text {
+            font-size: 15px;
+            color: #666;
+        }
+        .btn {
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 5px;
+        }
+        .btn-info {
+            background-color: #17a2b8;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+        }
+        .btn-success {
+            background-color: #28a745;
+        }
+        .nav-tabs {
+            margin-bottom: 20px;
+        }
+        .tab-pane {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+        .section {
+            width: 100%;
+            margin-top: 20px;
+        }
+        .section-title {
+            width: 100%;
+            font-size: 20px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Campanhas</h1>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">Criar Nova Campanha</button>
+
+        <!-- Abas para cada ano -->
+        <ul class="nav nav-tabs" id="yearTabs" role="tablist"></ul>
+        <!-- Conteúdo das abas -->
+        <div class="tab-content" id="yearTabsContent"></div>
+
+        <!-- Modal para Criar/Editar Campanha -->
+        <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createModalLabel">Gerenciar Campanha</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="createForm">
+                            <input type="hidden" id="cardId">
+                            <div class="mb-3">
+                                <label for="photoInput" class="form-label">Foto URL</label>
+                                <input type="text" class="form-control" id="photoInput" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="headlineInput" class="form-label">Headline</label>
+                                <input type="text" class="form-control" id="headlineInput" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="descriptionInput" class="form-label">Descrição</label>
+                                <textarea class="form-control" id="descriptionInput" rows="3" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="validityInput" class="form-label">Validade</label>
+                                <input type="date" class="form-control" id="validityInput" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="effectiveYearInput" class="form-label">Ano Efetivo</label>
+                                <input type="number" class="form-control" id="effectiveYearInput" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="statusInput" class="form-label">Status</label>
+                                <select class="form-control" id="statusInput">
+                                    <option value="true">Ativo</option>
+                                    <option value="false">Inativo</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                        <button type="button" class="btn btn-primary" onclick="saveCampaign()">Salvar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let editingCardId = null; // Variável para controlar o ID do card sendo editado
+
+        function saveCampaign() {
+            const cardId = editingCardId;
+            const formData = {
+                photo: document.getElementById('photoInput').value,
+                headline: document.getElementById('headlineInput').value,
+                description: document.getElementById('descriptionInput').value,
+                validity: document.getElementById('validityInput').value,
+                effectiveYear: parseInt(document.getElementById('effectiveYearInput').value, 10),
+                isActive: document.getElementById('statusInput').value === "true"
+            };
+
+            const options = {
+                method: cardId ? 'PUT' : 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(formData)
+            };
+
+            const url = `http://localhost:3000/api/cards/${cardId ? cardId : ''}`;
+            fetch(url, options)
+                .then(response => response.json())
+                .then(data => {
+                    alert('Campanha salva com sucesso!');
+                    var modal = bootstrap.Modal.getInstance(document.getElementById('createModal'));
+                    modal.hide();
+                    document.getElementById('createForm').reset();
+                    fetchCards();  // Recarregar os cards após salvar
+                    editingCardId = null;  // Limpar o ID de edição após salvar
+                })
+                .catch(error => {
+                    console.error('Erro ao salvar a campanha:', error);
+                    alert('Erro ao salvar a campanha.');
+                });
+        }
+
+        function fetchCards() {
+            fetch('http://localhost:3000/api/cards')
+                .then(response => response.json())
+                .then(cards => {
+                    let years = {};
+
+                    // Organizar cards por anos e status
+                    cards.forEach(card => {
+                        const year = card.effectiveYear; // Assume effectiveYear está disponível
+                        if (!years[year]) years[year] = { active: [], inactive: [] };
+                        if (card.isActive) {
+                            years[year].active.push(card);
+                        } else {
+                            years[year].inactive.push(card);
+                        }
+                    });
+
+                    // Criar abas e conteúdo das abas
+                    const tabs = document.getElementById('yearTabs');
+                    const content = document.getElementById('yearTabsContent');
+                    tabs.innerHTML = '';
+                    content.innerHTML = '';
+                    let firstTab = true;
+
+                    Object.keys(years).sort().forEach(year => {
+                        // Aba
+                        const tab = document.createElement('li');
+                        tab.className = 'nav-item';
+                        tab.innerHTML = `<a class="nav-link ${firstTab ? 'active' : ''}" id="year${year}-tab" data-bs-toggle="tab" href="#year${year}" role="tab" aria-controls="year${year}" aria-selected="${firstTab}">${year}</a>`;
+                        tabs.appendChild(tab);
+
+                        // Conteúdo da Aba
+                        const tabPane = document.createElement('div');
+                        tabPane.className = `tab-pane fade ${firstTab ? 'show active' : ''}`;
+                        tabPane.id = `year${year}`;
+                        tabPane.role = 'tabpanel';
+                        tabPane.setAttribute('aria-labelledby', `year${year}-tab`);
+
+                        // Seção Ativas
+                        const activeSection = document.createElement('div');
+                        activeSection.className = 'section';
+                        activeSection.innerHTML = `<div class="section-title">Ativas</div>`;
+                        years[year].active.forEach(card => {
+                            activeSection.appendChild(createCardElement(card)); // Adiciona cards
+                        });
+                        tabPane.appendChild(activeSection);
+
+                        // Seção Inativas
+                        const inactiveSection = document.createElement('div');
+                        inactiveSection.className = 'section';
+                        inactiveSection.innerHTML = `<div class="section-title">Inativas</div>`;
+                        years[year].inactive.forEach(card => {
+                            inactiveSection.appendChild(createCardElement(card)); // Adiciona cards
+                        });
+                        tabPane.appendChild(inactiveSection);
+
+                        content.appendChild(tabPane);
+                        firstTab = false;
+                    });
+                })
+                .catch(error => console.error('Erro ao buscar campanhas:', error));
+        }
+
+        function createCardElement(card) {
+            const cardDiv = document.createElement('div');
+            cardDiv.className = 'card';
+            const validityDate = new Date(card.validity).toLocaleDateString();
+            cardDiv.innerHTML = `
+                <img src="${card.photo}" class="card-img-top" alt="Image of ${card.headline}">
+                <div class="card-body">
+                    <h5 class="card-title">${card.headline}</h5>
+                    <p class="card-text">${card.description}</p>
+                    <p class="card-text"><small class="text-muted">Valid until ${validityDate}</small></p>
+                    <p class="card-text"><small class="text-muted">Effective Year: ${card.effectiveYear}</small></p>
+                    <button class="btn btn-info" onclick="editCampaign('${card._id}', '${card.photo}', '${card.headline}', '${card.description}', '${card.validity.split('T')[0]}', ${card.effectiveYear}, ${card.isActive})">Editar</button>
+                    <button class="btn btn-${card.isActive ? 'danger' : 'success'}" onclick="toggleStatus('${card._id}', ${!card.isActive})">
+                        ${card.isActive ? 'Desativar' : 'Ativar'}
+                    </button>
+                </div>
+            `;
+            return cardDiv;
+        }
+
+        function toggleStatus(cardId, isActive) {
+            fetch(`http://localhost:3000/api/cards/${cardId}/activate`, {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ isActive })
+            })
+            .then(response => response.json())
+            .then(() => {
+                alert('Status da campanha atualizado com sucesso!');
+                fetchCards(); // Atualizar a lista de cards
+            })
+            .catch(error => {
+                console.error('Erro ao atualizar o status da campanha:', error);
+                alert('Erro ao atualizar o status da campanha.');
+            });
+        }
+
+        function editCampaign(cardId, photo, headline, description, validity, effectiveYear, isActive) {
+            // Preencher os campos do formulário com os dados
+            editingCardId = cardId;
+            document.getElementById('photoInput').value = photo;
+            document.getElementById('headlineInput').value = headline;
+            document.getElementById('descriptionInput').value = description;
+            document.getElementById('validityInput').value = validity;
+            document.getElementById('effectiveYearInput').value = effectiveYear;
+            document.getElementById('statusInput').value = isActive.toString();
+
+            // Exibir o modal
+            var modal = new bootstrap.Modal(document.getElementById('createModal'));
+            modal.show();
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchCards); // Carrega as campanhas ao carregar a página
+    </script>
+</body>
+</html>

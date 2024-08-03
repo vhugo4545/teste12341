@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRUD de Produtos, Formulário de Evento e Resumo Executivo</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <style>
+    body {
+      margin-top: 20px;
+    }
+    .cost-field {
+      background-color: #f8d7da; /* Fundo levemente avermelhado */
+    }
+    .price-field {
+      background-color: #d4edda; /* Fundo levemente esverdeado */
+    }
+    .table-bordered {
+      border: 1px solid #ddd; /* Borda da tabela */
+    }
+    .name-bold {
+      font-weight: bold; /* Nomes em negrito */
+    }
+    .description-tooltip {
+      position: relative;
+      display: inline-block;
+    }
+    .description-tooltip .description-text {
+      visibility: hidden;
+      width: 200px;
+      background-color: #f9f9f9;
+      color: #000;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%; /* Posiciona a janela flutuante acima */
+      left: 50%;
+      margin-left: -100px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    .description-tooltip:hover .description-text {
+      visibility: visible; /* Mostra a janela flutuante ao passar o mouse */
+    }
+    .table-wrapper {
+      max-height: 950px;
+      overflow-y: auto;
+    }
+    .tab-pane {
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-5">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Produtos</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Formulário de Evento</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="summary-tab" data-toggle="tab" href="#summary" role="tab" aria-controls="summary" aria-selected="false">Resumo Executivo</a>
+      </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+      <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+        <div class="mt-3 table-wrapper">
+          <button id="newProductButton" class="btn btn-primary mb-3">Adicionar Novo Produto</button>
+          <hr>
+          <div class="col-md-4">
+            <div class="form-group">
+                <label for="cv">Número de convidados</label>
+                <input type="number" class="form-control" id="cv" name="cv" required>
+        
+                <!-- Botão de Recarregar -->
+                <button type="button" class="btn btn-secondary" onclick="fetchProducts()">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+        </div>
+        
+          <input type="text" id="searchInput" class="form-control mb-3" placeholder="Pesquisar produtos">
+          
+    
+          <table class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Descrição</th>
+                <th>Custo 2024</th>
+                <th>Custo 2025</th>
+                <th>Custo 2026</th>
+                <th>Preço 2024</th>
+                <th>Preço 2025</th>
+                <th>Preço 2026</th>
+                <th>Tipo</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="productTableBody">
+              <!-- Produtos serão inseridos dinamicamente aqui -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+        <div class="container">
+          <center>
+            <h1 class="mt-5">Formulário de Evento</h1>
+          </center>
+          <br>
+          <hr>
+          <br>
+          <form id="eventForm" action="http://localhost:3000/submit" method="POST">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="Representante">Representante</label>
+                  <input type="text" class="form-control" id="Representante" name="Representante" required>
+                </div>
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                  <label for="espaco">Espaço</label>
+                  <input type="text" class="form-control" id="espaco" name="espaco" required>
+                </div>
+                <div class="form-group">
+                  <label for="telefone">Telefone</label>
+                  <input type="text" class="form-control" id="telefone" name="telefone" required>
+                </div>
+                <div class="form-group">
+                  <label for="data">Data</label>
+                  <input type="date" class="form-control" id="data" name="data" required>
+                </div>
+                <div class="form-group">
+                  <label for="dia">Dia</label>
+                  <input type="text" class="form-control" id="dia" name="dia" readonly>
+                </div>
+                <div class="form-group">
+                  <label for="convidados">Convidados</label>
+                  <input type="number" class="form-control" id="convidados" name="convidados" required>
+                </div>
+                <div class="form-group">
+                  <label for="horario">Horário</label>
+                  <input type="time" class="form-control" id="horario" name="horario" required>
+                </div>
+                <div class="form-group">
+                  <label for="valorfinal">Valor Final</label>
+                  <input type="number" class="form-control" id="valorfinal" name="valorfinal" required>
+                </div>
+                <div class="form-group">
+                  <label for="cpf">CPF</label>
+                  <input type="text" class="form-control" id="cpf" name="cpf" required>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="estadocivil">Estado Civil</label>
+                  <input type="text" class="form-control" id="estadocivil" name="estadocivil" required>
+                </div>
+                <div class="form-group">
+                  <label for="profissao">Profissão</label>
+                  <input type="text" class="form-control" id="profissao" name="profissao" required>
+                </div>
+                <div class="form-group">
+                  <label for="bairro">Bairro</label>
+                  <input type="text" class="form-control" id="bairro" name="bairro" required>
+                </div>
+                <div class="form-group">
+                  <label for="cidade">Cidade</label>
+                  <input type="text" class="form-control" id="cidade" name="cidade" required>
+                </div>
+                <div class="form-group">
+                  <label for="uf">UF</label>
+                  <input type="text" class="form-control" id="uf" name="uf" required>
+                </div>
+                <div class="form-group">
+                  <label for="cep">CEP</label>
+                  <input type="text" class="form-control" id="cep" name="cep" required>
+                </div>
+                <div class="form-group">
+                  <label for="tipodoevento">Tipo do Evento</label>
+                  <input type="text" class="form-control" id="tipodoevento" name="tipodoevento" required>
+                </div>
+                <div class="form-group">
+                  <label for="nomenoiva">Nome da Noiva</label>
+                  <input type="text" class="form-control" id="nomenoiva" name="nomenoiva" required>
+                </div>
+                <div class="form-group">
+                  <label for="nomenoivo">Nome do Noivo</label>
+                  <input type="text" class="form-control" id="nomenoivo" name="nomenoivo" required>
+                </div>
+                <div class="form-group">
+                  <label for="decoracao">Decoração</label>
+                  <select class="form-control" id="decoracao" name="decoracao" required>
+                    <option value="Decoração Natural">Decoração Natural</option>
+                    <option value="Decoração Artificial">Decoração Artificial</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="numArranjos">Número de Arranjos</label>
+                  <input type="number" class="form-control" id="numArranjos" name="numArranjos" readonly>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="coquetelaria">Coquetelaria</label>
+                  <select class="form-control" id="coquetelaria" name="coquetelaria" required>
+                    <option value="Bar Ouro">Bar Ouro</option>
+                    <option value="Bar Prata">Bar Prata</option>
+                    <option value="Não incluso">Não Tem Bar</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="listaDeopcionaisContratados">Lista de Opcionais Contratados</label>
+                  <select class="form-control" id="listaDeopcionaisContratados" name="listaDeopcionaisContratados[]" multiple="multiple">
+                    <!-- Opções serão preenchidas dinamicamente -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="listaDeopcionaisCortesia">Lista de Opcionais Cortesia</label>
+                  <select class="form-control" id="listaDeopcionaisCortesia" name="listaDeopcionaisCortesia[]" multiple="multiple">
+                    <!-- Opções serão preenchidas dinamicamente -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="tipoDeEntrada">Tipo de Entrada</label>
+                  <select class="form-control" id="tipoDeEntrada" name="tipoDeEntrada" required>
+                    <option value="100">100%</option>
+                    <option value="50">50%</option>
+                    <option value="30">30%</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="valorDeEntrada">Valor de Entrada</label>
+                  <input type="number" class="form-control" id="valorDeEntrada" name="valorDeEntrada" required>
+                </div>
+                <div class="form-group">
+                  <label for="UltimaDataEntrada">Última Data de Entrada</label>
+                  <input type="date" class="form-control" id="UltimaDataEntrada" name="UltimaDataEntrada" required>
+                </div>
+                <div class="form-group">
+                  <label for="CondicaoDaEntrada">Condição da Entrada</label>
+                  <input type="text" class="form-control" id="CondicaoDaEntrada" name="CondicaoDaEntrada" required>
+                </div>
+                <div class="form-group">
+                  <label for="valorDo70">Parcela Restante</label>
+                  <input type="number" class="form-control" id="valorDo70" name="valorDo70" required>
+                </div>
+                <div class="form-group">
+                  <label for="dataAtual">Data Atual</label>
+                  <input type="date" class="form-control" id="dataAtual" name="dataAtual" required>
+                </div>
+                <div class="form-group">
+                  <label for="nomeDocumento">Espaço</label>
+                  <select class="form-control" id="nomeDocumento" name="nomeDocumento" required>
+                    <option value="Meyer">Meyer</option>
+                    <option value="Giardino">Giardino</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Enviar</button>
+          </form>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="summary" role="tabpanel" aria-labelledby="summary-tab">
+        <div class="container">
+          <center>
+            <h1 class="mt-5">Resumo Executivo</h1>
+          </center>
+          <br>
+          <hr>
+          <br>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="salao">Salão</label>
+                <input type="text" class="form-control" id="salao" name="salao">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="vendedor">Vendedor</label>
+                <input type="text" class="form-control" id="vendedor" name="vendedor">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="dataEvento">Data do Evento</label>
+                <input type="date" class="form-control" id="dataEvento" name="dataEvento">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="dataAssinatura">Data de Assinatura</label>
+                <input type="date" class="form-control" id="dataAssinatura" name="dataAssinatura">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="valorTabela">Valor de Tabela</label>
+                <input type="number" class="form-control" id="valorTabela" name="valorTabela">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="valorVendido">Valor Vendido</label>
+                <input type="number" class="form-control" id="valorVendido" name="valorVendido" readonly>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="Desconto">Desconto</label>
+                <input type="number" class="form-control" id="Desconto" name="Desconto" readonly>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="Porcentagem">Desconto em Porcentagem</label>
+                <input type="number" class="form-control" id="Porcentagem" name="Porcentagem" readonly>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="preVendaResponsavel">Pré-venda Responsável</label>
+                <input type="text" class="form-control" id="preVendaResponsavel" name="preVendaResponsavel">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="qtdConvidadosResumo">Quantidade de Convidados</label>
+                <input type="number" class="form-control" id="qtdConvidadosResumo" name="qtdConvidadosResumo" value="1" min="1">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <input type="text" id="searchSummaryInput" class="form-control mb-3" placeholder="Pesquisar produtos no resumo">
+              <button id="addProductSummaryButton" class="btn btn-primary mb-3">Adicionar Produto ao Resumo</button>
+              <div class="table-wrapper">
+                <table class="table table-striped table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Produto</th>
+                      <th>Tipo</th>
+                      <th>Valor de Venda</th>
+                      <th>Valor de Custo</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody id="summaryTableBody">
+                    <!-- Produtos serão inseridos dinamicamente aqui -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <h4>Resumo de Itens</h4>
+              <div class="table-wrapper">
+                <table class="table table-striped table-bordered">
+                  <thead>
+                    <tr>
+                      <th>Nome</th>
+                      <th>Tipo</th>
+                      <th>Valor de Venda</th>
+                      <th>Valor de Custo</th>
+                      <th>Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody id="summaryItemsTableBody">
+                    <!-- Itens incluídos serão inseridos dinamicamente aqui -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para adicionar/editar produtos -->
+  <div class="modal" tabindex="-1" id="productModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Produto</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="productForm">
+            <input type="hidden" id="productId">
+            <div class="form-group">
+              <label for="name">Nome</label>
+              <input type="text" class="form-control" id="name" required>
+            </div>
+            <div class="form-group">
+              <label for="description">Descrição</label>
+              <input type="text" class="form-control" id="description" required>
+            </div>
+            <div class="form-group">
+              <label for="cost2024">Custo 2024</label>
+              <input type="number" step="0.01" min="0" class="form-control cost-field" id="cost2024" required>
+            </div>
+            <div class="form-group">
+              <label for="price2024">Preço 2024</label>
+              <input type="number" step="0.01" min="0" class="form-control price-field" id="price2024" required>
+            </div>
+            <div class="form-group">
+              <label for="isUnitary">Tipo</label>
+              <select class="form-control" id="isUnitary" required>
+                <option value="true">Unitário</option>
+                <option value="false">Por Convidado</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="qtdConvidados">Quantidade de Convidados</label>
+              <input type="number" class="form-control" id="qtdConvidados" name="qtdConvidados" value="1" min="1">
+            </div>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const productTableBody = document.getElementById('productTableBody');
+      const productModal = new bootstrap.Modal(document.getElementById('productModal'));
+      const productForm = document.getElementById('productForm');
+      const newProductButton = document.getElementById('newProductButton');
+      const productIdField = document.getElementById('productId');
+      const nameField = document.getElementById('name');
+      const descriptionField = document.getElementById('description');
+      const cost2024Field = document.getElementById('cost2024');
+      const price2024Field = document.getElementById('price2024');
+      const isUnitaryField = document.getElementById('isUnitary');
+      const qtdConvidadosField = document.getElementById('qtdConvidados');
+      const searchInput = document.getElementById('searchInput');
+      const summaryTableBody = document.getElementById('summaryTableBody');
+      const searchSummaryInput = document.getElementById('searchSummaryInput');
+      const addProductSummaryButton = document.getElementById('addProductSummaryButton');
+      const summaryItemsTableBody = document.getElementById('summaryItemsTableBody');
+      const valorVendidoInput = document.getElementById('valorVendido');
+      const dataEventoInput = document.getElementById('dataEvento');
+      const valorTabelaInput = document.getElementById('valorTabela');
+      const descontoInput = document.getElementById('Desconto');
+      const porcentagemInput = document.getElementById('Porcentagem');
+      const qtdConvidadosResumoInput = document.getElementById('qtdConvidadosResumo');
+      const listaDeopcionaisContratados = $('#listaDeopcionaisContratados');
+      const listaDeopcionaisCortesia = $('#listaDeopcionaisCortesia');
+      const tipoDeEntrada = document.getElementById('tipoDeEntrada');
+      const valorDeEntradaInput = document.getElementById('valorDeEntrada');
+      const valorDo70Input = document.getElementById('valorDo70');
+      const valorFinalInput = document.getElementById('valorfinal');
+      const numArranjosInput = document.getElementById('numArranjos');
+
+      // Inicializar Select2
+      listaDeopcionaisContratados.select2();
+      listaDeopcionaisCortesia.select2();
+
+      // Buscar e exibir produtos
+      async function fetchProducts() {
+        const response = await fetch('http://localhost:3000/api/products');
+        const products = await response.json();
+        renderProducts(products);
+        populateSelectFields(products);
+      }
+
+      // Preencher campos de seleção
+      function populateSelectFields(products) {
+        listaDeopcionaisContratados.empty();
+        listaDeopcionaisCortesia.empty();
+
+        products.forEach(product => {
+          const option = new Option(product.name, product._id);
+          listaDeopcionaisContratados.append(option);
+          listaDeopcionaisCortesia.append(option.cloneNode(true));
+        });
+      }
+
+      function renderProducts(products) {
+        const searchText = searchInput.value.toLowerCase();
+        const filteredProducts = products.filter(product =>
+          product.name.toLowerCase().includes(searchText) ||
+          product.description.toLowerCase().includes(searchText)
+        );
+
+        // Ordenar os produtos por nome
+        const sortedProducts = filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+
+        // Obter o valor de número de convidados
+        const numberOfGuests = parseInt(document.getElementById('cv').value) || 1;
+
+        productTableBody.innerHTML = sortedProducts.map(product => {
+          const cost2024 = product.cost;
+          const price2024 = product.price;
+
+          const cost2025 = cost2024 * 1.1;
+          const price2025 = price2024 * 1.1;
+
+          const cost2026 = cost2025 * 1.1;
+          const price2026 = price2025 * 1.1;
+
+          const finalCost2024 = product.isUnitary ? cost2024 : cost2024 * numberOfGuests;
+          const finalPrice2024 = product.isUnitary ? price2024 : price2024 * numberOfGuests;
+
+          const finalCost2025 = product.isUnitary ? cost2025 : cost2025 * numberOfGuests;
+          const finalPrice2025 = product.isUnitary ? price2025 : price2025 * numberOfGuests;
+
+          const finalCost2026 = product.isUnitary ? cost2026 : cost2026 * numberOfGuests;
+          const finalPrice2026 = product.isUnitary ? price2026 : price2026 * numberOfGuests;
+
+          return `
+            <tr>
+              <td class="name-bold description-tooltip">${product.name}
+                <span class="description-text">${product.description}</span>
+              </td>
+              <td>${product.description}</td>
+              <td class="cost-field">${finalCost2024.toFixed(2)}</td>
+              <td class="cost-field">${finalCost2025.toFixed(2)}</td>
+              <td class="cost-field">${finalCost2026.toFixed(2)}</td>
+              <td class="price-field">${finalPrice2024.toFixed(2)}</td>
+              <td class="price-field">${finalPrice2025.toFixed(2)}</td>
+              <td class="price-field">${finalPrice2026.toFixed(2)}</td>
+              <td>${product.isUnitary ? 'Unitário' : 'Por Convidado'}</td>
+              <td>
+                <button class="btn btn-warning btn-sm" onclick="editProduct('${product._id}')">Editar</button>
+                <button class="btn btn-danger btn-sm" onclick="confirmDeleteProduct('${product._id}')">Excluir</button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+      }
+
+      // Renderizar produtos na tabela de resumo
+      function renderSummaryProducts(products) {
+        const searchText = searchSummaryInput.value.toLowerCase();
+        const filteredProducts = products.filter(product => 
+          product.name.toLowerCase().includes(searchText) ||
+          product.description.toLowerCase().includes(searchText)
+        );
+
+        const sortedProducts = filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+
+        summaryTableBody.innerHTML = sortedProducts.map(product => `
+          <tr>
+            <td class="name-bold description-tooltip">${product.name}
+              <span class="description-text">${product.description}</span>
+            </td>
+            <td>${product.isUnitary ? 'Unitário' : 'Por Convidado'}</td>
+            <td class="price-field">${product.price.toFixed(2)}</td>
+            <td class="cost-field">${product.cost.toFixed(2)}</td>
+            <td>
+              <button class="btn btn-success btn-sm" onclick="addProductToSummary('${product._id}', 'vendido')">Incluir como Vendido</button>
+              <button class="btn btn-secondary btn-sm" onclick="addProductToSummary('${product._id}', 'cortesia')">Incluir como Cortesia</button>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      // Abrir modal para novo produto
+      newProductButton.addEventListener('click', () => {
+        productIdField.value = '';
+        productForm.reset();
+        productModal.show();
+      });
+
+      // Manipular envio do formulário
+      productForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const product = {
+          name: nameField.value,
+          description: descriptionField.value,
+          cost: parseFloat(cost2024Field.value),
+          price: parseFloat(price2024Field.value),
+          isUnitary: isUnitaryField.value === 'true'
+        };
+
+        const method = productIdField.value ? 'PUT' : 'POST';
+        const url = productIdField.value ? `http://localhost:3000/api/products/${productIdField.value}` : 'http://localhost:3000/api/products';
+
+        await fetch(url, {
+          method: method,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(product)
+        });
+
+        productModal.hide();
+        fetchProducts();
+      });
+
+      // Editar produto
+      window.editProduct = async function(id) {
+        const response = await fetch(`http://localhost:3000/api/products/${id}`);
+        if (response.ok) {
+          const product = await response.json();
+          productIdField.value = product._id;
+          nameField.value = product.name;
+          descriptionField.value = product.description;
+          cost2024Field.value = product.cost;
+          price2024Field.value = product.price;
+          isUnitaryField.value = product.isUnitary ? 'true' : 'false';
+
+          productModal.show();
+        } else {
+          console.error('Produto não encontrado');
+        }
+      };
+
+      // Confirmar exclusão de produto
+      window.confirmDeleteProduct = function(id) {
+        if (confirm("Tem certeza que quer excluir este item?")) {
+          deleteProduct(id);
+        }
+      };
+
+      // Excluir produto
+      window.deleteProduct = async function(id) {
+        await fetch(`http://localhost:3000/api/products/${id}`, { method: 'DELETE' });
+        fetchProducts();
+      };
+
+      // Adicionar produto ao resumo
+      window.addProductToSummary = async function(id, type) {
+        const response = await fetch(`http://localhost:3000/api/products/${id}`);
+        if (response.ok) {
+          const product = await response.json();
+          const qtdConvidados = parseInt(qtdConvidadosResumoInput.value) || 1;
+          const valorVenda = type === 'vendido' ? calculateValueBasedOnEventDate(product.price, product.isUnitary, qtdConvidados) : 'Cortesia';
+          const valorCusto = calculateValueBasedOnEventDate(product.cost, product.isUnitary, qtdConvidados);
+          
+          // Adicione o produto à tabela de resumo de itens
+          const newRow = document.createElement('tr');
+          newRow.innerHTML = `
+            <td class="name-bold">${product.name}</td>
+            <td>${product.isUnitary ? 'Unitário' : 'Por Convidado'}</td>
+            <td class="price-field">${valorVenda}</td>
+            <td class="cost-field">${valorCusto}</td>
+            <td>
+              <button class="btn btn-danger btn-sm" onclick="removeSummaryProduct(this)">Remover</button>
+            </td>
+          `;
+          summaryItemsTableBody.appendChild(newRow);
+
+          // Recalcular o valor vendido
+          calculateTotalSold();
+        }
+      };
+
+      // Remover produto do resumo
+      window.removeSummaryProduct = function(button) {
+        const row = button.closest('tr');
+        summaryItemsTableBody.removeChild(row);
+        // Recalcular o valor vendido
+        calculateTotalSold();
+      };
+
+      // Calcular o valor total vendido e o desconto
+      function calculateTotalSold() {
+        let totalSold = 0;
+        summaryItemsTableBody.querySelectorAll('tr').forEach(row => {
+          const cell = row.querySelector('.price-field');
+          const value = cell.textContent === 'Cortesia' ? 0 : parseFloat(cell.textContent);
+          totalSold += value;
+        });
+        valorVendidoInput.value = totalSold.toFixed(2);
+
+        const valorTabela = parseFloat(valorTabelaInput.value) || 0;
+        const desconto = valorTabela - totalSold;
+        descontoInput.value = desconto.toFixed(2);
+
+        const porcentagem = valorTabela ? (desconto / valorTabela) * 100 : 0;
+        porcentagemInput.value = porcentagem.toFixed(2);
+      }
+
+      // Calcular valor baseado no ano do evento e quantidade de convidados
+      function calculateValueBasedOnEventDate(value, isUnitary, qtdConvidados) {
+        const dataEvento = new Date(dataEventoInput.value);
+        const year = dataEvento.getFullYear();
+        let adjustedValue = value;
+
+        if (year === 2025) {
+          adjustedValue = value * 1.1;
+        } else if (year === 2026) {
+          adjustedValue = value * 1.1 * 1.1;
+        }
+
+        if (!isUnitary) {
+          adjustedValue *= qtdConvidados;
+        }
+
+        return adjustedValue.toFixed(2);
+      }
+
+      // Ajustar valores de entrada e parcela restante
+      function adjustPaymentFields() {
+        const valorFinal = parseFloat(valorFinalInput.value) || 0;
+        const tipoEntrada = parseInt(tipoDeEntrada.value) || 100;
+
+        const valorEntrada = valorFinal * (tipoEntrada / 100);
+        const valorRestante = valorFinal - valorEntrada;
+
+        valorDeEntradaInput.value = valorEntrada.toFixed(2);
+        valorDo70Input.value = valorRestante.toFixed(2);
+      }
+
+      tipoDeEntrada.addEventListener('change', adjustPaymentFields);
+      valorFinalInput.addEventListener('input', adjustPaymentFields);
+
+      // Calcular número de arranjos
+      function calculateNumArranjos() {
+        const qtdConvidados = parseInt(document.getElementById('convidados').value) || 0;
+        const numArranjos = Math.floor((qtdConvidados * 0.8) / 10) - 1;
+        numArranjosInput.value = numArranjos > 0 ? numArranjos : 0;
+      }
+
+      document.getElementById('convidados').addEventListener('input', calculateNumArranjos);
+
+      // Buscar produtos inicialmente
+      fetchProducts();
+
+      // Adicionar evento de pesquisa
+      searchInput.addEventListener('input', fetchProducts);
+      searchSummaryInput.addEventListener('input', async () => {
+        const response = await fetch('http://localhost:3000/api/products');
+        const products = await response.json();
+        renderSummaryProducts(products);
+      });
+
+      // Evento para adicionar produtos ao resumo
+      addProductSummaryButton.addEventListener('click', async () => {
+        const response = await fetch('http://localhost:3000/api/products');
+        const products = await response.json();
+        renderSummaryProducts(products);
+      });
+
+      // Recalcular valores ao modificar campos
+      dataEventoInput.addEventListener('change', calculateTotalSold);
+      valorTabelaInput.addEventListener('input', calculateTotalSold);
+      qtdConvidadosResumoInput.addEventListener('input', calculateTotalSold);
+      document.querySelectorAll('#summary input, #summary select').forEach(input => {
+        input.addEventListener('input', calculateTotalSold);
+      });
+    });
+
+    // Scripts para o formulário de evento
+    function formatDate(date) {
+      const [year, month, day] = date.split('-');
+      return `${day}/${month}/${year}`;
+    }
+
+    function getDayOfWeek(date) {
+      const days = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+      const d = new Date(date + 'T00:00:00');
+      return days[d.getDay()];
+    }
+
+    function subtractDays(date, days) {
+      const result = new Date(date);
+      result.setDate(result.getDate() - days);
+      return result.toISOString().split('T')[0]; // Return in yyyy-mm-dd format
+    }
+
+    document.getElementById('data').addEventListener('change', function(event) {
+      const date = event.target.value;
+      document.getElementById('dia').value = getDayOfWeek(date);
+    });
+
+    document.getElementById('eventForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      const formData = new FormData(event.target);
+      const data = Object.fromEntries(formData.entries());
+
+      // Calcular 30 dias antes do evento
+      if (data.data) {
+        const data30DiasAntes = subtractDays(data.data, 30);
+        data['30diasAntesDoEvento'] = formatDate(data30DiasAntes);
+      }
+
+      // Formatar as datas para dd/mm/yyyy
+      if (data.data) data.data = formatDate(data.data);
+      if (data.UltimaDataEntrada) data.UltimaDataEntrada = formatDate(data.UltimaDataEntrada);
+      if (data.dataAtual) data.dataAtual = formatDate(data.dataAtual);
+
+      // Converter campos de opcionais em texto único
+      data.listaDeopcionaisContratados = $('#listaDeopcionaisContratados').val().join(', ');
+      data.listaDeopcionaisCortesia = $('#listaDeopcionaisCortesia').val().join(', ');
+
+      try {
+        const response = await fetch('http://localhost:3000/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          alert('Dados enviados com sucesso');
+        } else {
+          alert('Falha ao enviar dados');
+        }
+      } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao enviar dados');
+      }
+    });
+
+    // Script para preenchimento automático do formulário
+    function fillForm(data) {
+      for (const key in data) {
+        if (data.hasOwnProperty(key)) {
+          const input = document.querySelector(`[name="${key}"]`);
+          if (input) {
+            if (input.type === 'date') {
+              input.value = data[key].split('/').reverse().join('-'); // Ajusta a data para yyyy-mm-dd
+            } else {
+              input.value = data[key];
+            }
+          }
+        }
+      }
+      // Calcular o dia da semana e preencher o campo "Dia"
+      if (data.data) {
+        const date = data.data.split('/').reverse().join('-'); // yyyy-mm-dd
+        document.getElementById('dia').value = getDayOfWeek(date);
+      }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+  const summaryTableBody = document.getElementById('summaryTableBody');
+  const searchSummaryInput = document.getElementById('searchSummaryInput');
+  const summaryTable = document.querySelector('#summary .table-wrapper');
+
+  // Mostrar ou esconder a tabela de resumo
+  function toggleSummaryTable() {
+    if (searchSummaryInput.value.trim() === '') {
+      summaryTable.style.display = 'none';
+    } else {
+      summaryTable.style.display = 'block';
+    }
+  }
+
+  // Buscar e exibir produtos no resumo
+  async function fetchSummaryProducts() {
+    const response = await fetch('http://localhost:3000/api/products');
+    const products = await response.json();
+    renderSummaryProducts(products);
+  }
+
+  // Renderizar produtos na tabela de resumo
+  function renderSummaryProducts(products) {
+    const searchText = searchSummaryInput.value.toLowerCase();
+    const filteredProducts = products.filter(product => 
+      product.name.toLowerCase().includes(searchText) ||
+      product.description.toLowerCase().includes(searchText)
+    );
+
+    const sortedProducts = filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+
+    summaryTableBody.innerHTML = sortedProducts.map(product => `
+      <tr>
+        <td class="name-bold description-tooltip">${product.name}
+          <span class="description-text">${product.description}</span>
+        </td>
+        <td>${product.isUnitary ? 'Unitário' : 'Por Convidado'}</td>
+        <td class="price-field">${product.price.toFixed(2)}</td>
+        <td class="cost-field">${product.cost.toFixed(2)}</td>
+        <td>
+          <button class="btn btn-success btn-sm" onclick="addProductToSummary('${product._id}', 'vendido')">Incluir como Vendido</button>
+          <button class="btn btn-secondary btn-sm" onclick="addProductToSummary('${product._id}', 'cortesia')">Incluir como Cortesia</button>
+        </td>
+      </tr>
+    `).join('');
+
+    toggleSummaryTable();
+  }
+
+  // Evento para adicionar produtos ao resumo
+  searchSummaryInput.addEventListener('input', fetchSummaryProducts);
+
+  // Inicializar com a tabela escondida
+  toggleSummaryTable();
+});
+
+    // Formatar datas no objeto formData
+    if (formData.data) formData.data = formatDate(formData.data);
+    if (formData.UltimaDataEntrada) formData.UltimaDataEntrada = formatDate(formData.UltimaDataEntrada);
+    if (formData.dataAtual) formData.dataAtual = formatDate(formData.dataAtual);
+
+    // Executar a função para preencher o formulário com os dados fornecidos
+    fillForm(formData);
+  </script>
+</body>
+</html>
