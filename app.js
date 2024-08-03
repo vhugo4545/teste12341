@@ -4,16 +4,14 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const cors = require('cors');
 const fetch = require('node-fetch'); // Assegure-se de ter a versão 2.x para compatibilidade CommonJS
+
 const app = express();
 
 // Routers
 const productRouter = require('./routes/products.js');
 const cardRouter = require('./routes/cards.js');
 
-// Modelos
-const Card = require('./models/card.js');
-
-// String de conexão com a senha fornecida
+// String de conexão com o MongoDB Atlas
 const mongoUri = 'mongodb+srv://Primore:Primore_1969@cluster0.g1hwzv9.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
 // Conectar ao MongoDB Atlas
