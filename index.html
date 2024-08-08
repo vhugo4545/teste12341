@@ -474,7 +474,7 @@
 
       // Buscar e exibir produtos
       async function fetchProducts() {
-        const response = await fetch('http://localhost:3000/api/products');
+        const response = await fetch('https://novo-nome-do-app-ba5a0bbd9a20.herokuapp.com/api/products');
         const products = await response.json();
         renderProducts(products);
         populateSelectFields(products);
@@ -591,7 +591,7 @@
         };
 
         const method = productIdField.value ? 'PUT' : 'POST';
-        const url = productIdField.value ? `http://localhost:3000/api/products/${productIdField.value}` : 'http://localhost:3000/api/products';
+        const url = productIdField.value ? `https://novo-nome-do-app-ba5a0bbd9a20.herokuapp.com/api/products/${productIdField.value}` : 'https://novo-nome-do-app-ba5a0bbd9a20.herokuapp.com/api/products';
 
         await fetch(url, {
           method: method,
@@ -605,7 +605,7 @@
 
       // Editar produto
       window.editProduct = async function(id) {
-        const response = await fetch(`http://localhost:3000/api/products/${id}`);
+        const response = await fetch(`https://novo-nome-do-app-ba5a0bbd9a20.herokuapp.com/api/products/${id}`);
         if (response.ok) {
           const product = await response.json();
           productIdField.value = product._id;
@@ -630,13 +630,13 @@
 
       // Excluir produto
       window.deleteProduct = async function(id) {
-        await fetch(`http://localhost:3000/api/products/${id}`, { method: 'DELETE' });
+        await fetch(`https://novo-nome-do-app-ba5a0bbd9a20.herokuapp.com/api/products/${id}`, { method: 'DELETE' });
         fetchProducts();
       };
 
       // Adicionar produto ao resumo
       window.addProductToSummary = async function(id, type) {
-        const response = await fetch(`http://localhost:3000/api/products/${id}`);
+        const response = await fetch(`https://novo-nome-do-app-ba5a0bbd9a20.herokuapp.com/api/products/${id}`);
         if (response.ok) {
           const product = await response.json();
           const qtdConvidados = parseInt(qtdConvidadosResumoInput.value) || 1;
@@ -736,14 +736,14 @@
       // Adicionar evento de pesquisa
       searchInput.addEventListener('input', fetchProducts);
       searchSummaryInput.addEventListener('input', async () => {
-        const response = await fetch('http://localhost:3000/api/products');
+        const response = await fetch('https://novo-nome-do-app-ba5a0bbd9a20.herokuapp.com/api/products');
         const products = await response.json();
         renderSummaryProducts(products);
       });
 
       // Evento para adicionar produtos ao resumo
       addProductSummaryButton.addEventListener('click', async () => {
-        const response = await fetch('http://localhost:3000/api/products');
+        const response = await fetch('https://novo-nome-do-app-ba5a0bbd9a20.herokuapp.com/api/products');
         const products = await response.json();
         renderSummaryProducts(products);
       });
@@ -802,7 +802,7 @@
       data.listaDeopcionaisCortesia = $('#listaDeopcionaisCortesia').val().join(', ');
 
       try {
-        const response = await fetch('http://localhost:3000/submit', {
+        const response = await fetch('https://novo-nome-do-app-ba5a0bbd9a20.herokuapp.com/submit', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -841,61 +841,62 @@
         document.getElementById('dia').value = getDayOfWeek(date);
       }
     }
+
     document.addEventListener('DOMContentLoaded', function() {
-  const summaryTableBody = document.getElementById('summaryTableBody');
-  const searchSummaryInput = document.getElementById('searchSummaryInput');
-  const summaryTable = document.querySelector('#summary .table-wrapper');
+      const summaryTableBody = document.getElementById('summaryTableBody');
+      const searchSummaryInput = document.getElementById('searchSummaryInput');
+      const summaryTable = document.querySelector('#summary .table-wrapper');
 
-  // Mostrar ou esconder a tabela de resumo
-  function toggleSummaryTable() {
-    if (searchSummaryInput.value.trim() === '') {
-      summaryTable.style.display = 'none';
-    } else {
-      summaryTable.style.display = 'block';
-    }
-  }
+      // Mostrar ou esconder a tabela de resumo
+      function toggleSummaryTable() {
+        if (searchSummaryInput.value.trim() === '') {
+          summaryTable.style.display = 'none';
+        } else {
+          summaryTable.style.display = 'block';
+        }
+      }
 
-  // Buscar e exibir produtos no resumo
-  async function fetchSummaryProducts() {
-    const response = await fetch('http://localhost:3000/api/products');
-    const products = await response.json();
-    renderSummaryProducts(products);
-  }
+      // Buscar e exibir produtos no resumo
+      async function fetchSummaryProducts() {
+        const response = await fetch('https://novo-nome-do-app-ba5a0bbd9a20.herokuapp.com/api/products');
+        const products = await response.json();
+        renderSummaryProducts(products);
+      }
 
-  // Renderizar produtos na tabela de resumo
-  function renderSummaryProducts(products) {
-    const searchText = searchSummaryInput.value.toLowerCase();
-    const filteredProducts = products.filter(product => 
-      product.name.toLowerCase().includes(searchText) ||
-      product.description.toLowerCase().includes(searchText)
-    );
+      // Renderizar produtos na tabela de resumo
+      function renderSummaryProducts(products) {
+        const searchText = searchSummaryInput.value.toLowerCase();
+        const filteredProducts = products.filter(product => 
+          product.name.toLowerCase().includes(searchText) ||
+          product.description.toLowerCase().includes(searchText)
+        );
 
-    const sortedProducts = filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+        const sortedProducts = filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
 
-    summaryTableBody.innerHTML = sortedProducts.map(product => `
-      <tr>
-        <td class="name-bold description-tooltip">${product.name}
-          <span class="description-text">${product.description}</span>
-        </td>
-        <td>${product.isUnitary ? 'Unitário' : 'Por Convidado'}</td>
-        <td class="price-field">${product.price.toFixed(2)}</td>
-        <td class="cost-field">${product.cost.toFixed(2)}</td>
-        <td>
-          <button class="btn btn-success btn-sm" onclick="addProductToSummary('${product._id}', 'vendido')">Incluir como Vendido</button>
-          <button class="btn btn-secondary btn-sm" onclick="addProductToSummary('${product._id}', 'cortesia')">Incluir como Cortesia</button>
-        </td>
-      </tr>
-    `).join('');
+        summaryTableBody.innerHTML = sortedProducts.map(product => `
+          <tr>
+            <td class="name-bold description-tooltip">${product.name}
+              <span class="description-text">${product.description}</span>
+            </td>
+            <td>${product.isUnitary ? 'Unitário' : 'Por Convidado'}</td>
+            <td class="price-field">${product.price.toFixed(2)}</td>
+            <td class="cost-field">${product.cost.toFixed(2)}</td>
+            <td>
+              <button class="btn btn-success btn-sm" onclick="addProductToSummary('${product._id}', 'vendido')">Incluir como Vendido</button>
+              <button class="btn btn-secondary btn-sm" onclick="addProductToSummary('${product._id}', 'cortesia')">Incluir como Cortesia</button>
+            </td>
+          </tr>
+        `).join('');
 
-    toggleSummaryTable();
-  }
+        toggleSummaryTable();
+      }
 
-  // Evento para adicionar produtos ao resumo
-  searchSummaryInput.addEventListener('input', fetchSummaryProducts);
+      // Evento para adicionar produtos ao resumo
+      searchSummaryInput.addEventListener('input', fetchSummaryProducts);
 
-  // Inicializar com a tabela escondida
-  toggleSummaryTable();
-});
+      // Inicializar com a tabela escondida
+      toggleSummaryTable();
+    });
 
     // Formatar datas no objeto formData
     if (formData.data) formData.data = formatDate(formData.data);
