@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos com Menu Lateral</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="produtos.css">
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+            margin: 0;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #343a40;
+            padding-top: 20px;
+        }
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #ffffff;
+            display: block;
+        }
+        .sidebar a:hover {
+            background-color: #007bff;
+            color: #ffffff;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+      <div class="sidebar">
+        <a href="index.html" target="contentFrame">Lista de contratos</a>
+        <a href="/1 front/" target="contentFrame">Produtos</a>
+        <a href="/1 front/evento.html" target="contentFrame">Formulário de Evento</a>
+        <a href="/1 front/resumo.html" target="contentFrame">Resumo Executivo</a>
+    </div>
+    <div class="content">
+        <div class="container mt-5">
+            <h1>Produtos</h1>
+            <button id="newProductButton" class="btn btn-primary mb-3">Adicionar Novo Produto</button>
+            <hr>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="cv">Número de convidados</label>
+                    <input type="number" class="form-control" id="cv" name="cv" required>
+                    <button type="button" class="btn btn-secondary" onclick="fetchProducts()">Recarregar</button>
+                </div>
+            </div>
+            <input type="text" id="searchInput" class="form-control mb-3" placeholder="Pesquisar produtos">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Custo 2024</th>
+                        <th>Custo 2025</th>
+                        <th>Custo 2026</th>
+                        <th>Preço 2024</th>
+                        <th>Preço 2025</th>
+                        <th>Preço 2026</th>
+                        <th>Tipo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="productTableBody">
+                    <!-- Produtos serão inseridos dinamicamente aqui -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Modal para adicionar/editar produtos -->
+        <div class="modal" tabindex="-1" id="productModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Produto</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Fechar">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="productForm">
+                            <input type="hidden" id="productId">
+                            <div class="form-group">
+                                <label for="name">Nome</label>
+                                <input type="text" class="form-control" id="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Descrição</label>
+                                <input type="text" class="form-control" id="description" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cost2024">Custo 2024</label>
+                                <input type="number" step="0.01" min="0" class="form-control cost-field" id="cost2024" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="price2024">Preço 2024</label>
+                                <input type="number" step="0.01" min="0" class="form-control price-field" id="price2024" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="isUnitary">Tipo</label>
+                                <select class="form-control" id="isUnitary" required>
+                                    <option value="true">Unitário</option>
+                                    <option value="false">Por Convidado</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="qtdConvidados">Quantidade de Convidados</label>
+                                <input type="number" class="form-control" id="qtdConvidados" name="qtdConvidados" value="1" min="1">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Salvar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="produtos.js"></script>
+</body>
+</html>

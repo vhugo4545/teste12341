@@ -1,0 +1,41 @@
+body {
+    margin-top: 20px;
+}
+.cost-field {
+    background-color: #f8d7da; /* Fundo levemente avermelhado */
+}
+.price-field {
+    background-color: #d4edda; /* Fundo levemente esverdeado */
+}
+.table-bordered {
+    border: 1px solid #ddd; /* Borda da tabela */
+}
+.name-bold {
+    font-weight: bold; /* Nomes em negrito */
+}
+.description-tooltip {
+    position: relative;
+    display: inline-block;
+}
+.description-tooltip .description-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: #f9f9f9;
+    color: #000;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; /* Posiciona a janela flutuante acima */
+    left: 50%;
+    margin-left: -100px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+.description-tooltip:hover .description-text {
+    visibility: visible; /* Mostra a janela flutuante ao passar o mouse */
+}
+.table-wrapper {
+    max-height: 950px;
+    overflow-y: auto;
+}

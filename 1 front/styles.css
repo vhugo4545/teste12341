@@ -1,0 +1,101 @@
+body {
+    margin-top: 20px;
+  }
+  
+  .wrapper {
+    display: flex;
+    align-items: stretch;
+  }
+  
+  #sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    background: #7386D5;
+    color: #fff;
+    transition: all 0.3s;
+  }
+  
+  #sidebar.active {
+    margin-left: -250px;
+  }
+  
+  #sidebar .sidebar-header {
+    padding: 20px;
+    background: #6d7fcc;
+  }
+  
+  #sidebar ul.components {
+    padding: 20px 0;
+    border-bottom: 1px solid #47748b;
+  }
+  
+  #sidebar ul p {
+    color: #fff;
+    padding: 10px;
+  }
+  
+  #sidebar ul li a {
+    padding: 10px;
+    font-size: 1.1em;
+    display: block;
+    color: #fff;
+  }
+  
+  #sidebar ul li a:hover {
+    color: #7386D5;
+    background: #fff;
+  }
+  
+  #content {
+    width: 100%;
+    padding: 20px;
+    min-height: 100vh;
+    transition: all 0.3s;
+  }
+  
+  .cost-field {
+    background-color: #f8d7da;
+  }
+  
+  .price-field {
+    background-color: #d4edda;
+  }
+  
+  .table-bordered {
+    border: 1px solid #ddd;
+  }
+  
+  .name-bold {
+    font-weight: bold;
+  }
+  
+  .description-tooltip {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .description-tooltip .description-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: #f9f9f9;
+    color: #000;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%;
+    left: 50%;
+    margin-left: -100px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .description-tooltip:hover .description-text {
+    visibility: visible;
+  }
+  
+  .table-wrapper {
+    max-height: 950px;
+    overflow-y: auto;
+  }
+  

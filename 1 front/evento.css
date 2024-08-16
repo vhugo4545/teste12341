@@ -1,0 +1,25 @@
+body {
+    margin-top: 20px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.form-group label {
+    font-weight: bold;
+}
+
+button[type="submit"] {
+    margin-top: 20px;
+}
+.custom-select2-dropdown .select2-results__option {
+    color: #000; /* Texto preto para contraste */
+    background-color: #f8f9fa; /* Fundo cinza claro */
+}
+
+.custom-select2-dropdown .select2-results__option--highlighted {
+    background-color: #007bff; /* Fundo azul para destaque */
+    color: #fff; /* Texto branco */
+}
