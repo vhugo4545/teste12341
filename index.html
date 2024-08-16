@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Lateral</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+            margin: 0;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #343a40;
+            padding-top: 20px;
+        }
+        .sidebar a {
+            padding: 10px 15px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #ffffff;
+            display: block;
+        }
+        .sidebar a:hover {
+            background-color: #007bff;
+            color: #ffffff;
+        }
+        .content {
+            flex: 1;
+            padding: 20px;
+        }
+        .table-container {
+            margin-top: 20px;
+        }
+        .btn-link {
+            background-color: #007bff;
+            color: #ffffff;
+            border: none;
+            padding: 5px 10px;
+            text-decoration: none;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .btn-link:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <a href="index.html" target="contentFrame">Lista de contratos</a>
+        <a href="/1 front/produtos.html" target="contentFrame">Produtos</a>
+        <a href="/1 front/evento.html" target="contentFrame">Formulário de Evento</a>
+        <a href="/1 front/resumo.html" target="contentFrame">Resumo Executivo</a>
+    </div>
+    <div class="content">
+        <h2>Dados da Planilha</h2>
+        <div class="table-container">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Consultor</th>
+                        <th>Link</th>
+                    </tr>
+                </thead>
+                <tbody id="sheetData">
+                    <!-- Os dados da planilha serão inseridos aqui -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('https://novo-nome-do-app-ba5a0bbd9a20.herokuapp.com/api/sheet-data')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.getElementById('sheetData');
+                    tableBody.innerHTML = data.map(row => `
+                        <tr>
+                            <td>${row.Cliente}</td>
+                            <td>${row.Consultor}</td>
+                            <td><a href="${row.Link}" target="_blank" class="btn-link">Abrir Documento</a></td>
+                        </tr>
+                    `).join('');
+                })
+                .catch(error => console.error('Erro ao carregar os dados:', error));
+        });
+    </script>
+</body>
+</html>
