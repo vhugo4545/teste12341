@@ -10,6 +10,7 @@ const app = express();
 // Routers
 const productRouter = require('./routes/products.js');
 const cardRouter = require('./routes/cards.js');
+const sheetRouter = require('./routes/sheetRoutes.js'); // Importando a nova rota
 
 // String de conexão com o MongoDB Atlas
 const mongoUri = 'mongodb+srv://Primore:Primore_1969@cluster0.g1hwzv9.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
@@ -27,6 +28,7 @@ app.use(express.static('public')); // Servir arquivos estáticos do diretório '
 // Usar routers
 app.use('/api/products', productRouter);
 app.use('/api/cards', cardRouter);
+app.use('/api', sheetRouter); // Usando a nova rota
 
 // Servir o arquivo HTML principal
 app.get('/', (req, res) => {
