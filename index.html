@@ -781,45 +781,52 @@
     });
 
     document.getElementById('eventForm').addEventListener('submit', async function(event) {
-      event.preventDefault();
+    event.preventDefault();
 
-      const formData = new FormData(event.target);
-      const data = Object.fromEntries(formData.entries());
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData.entries());
 
-      // Calcular 30 dias antes do evento
-      if (data.data) {
+    // Calcular 30 dias antes do evento
+    if (data.data) {
         const data30DiasAntes = subtractDays(data.data, 30);
         data['30diasAntesDoEvento'] = formatDate(data30DiasAntes);
-      }
+    }
 
-      // Formatar as datas para dd/mm/yyyy
-      if (data.data) data.data = formatDate(data.data);
-      if (data.UltimaDataEntrada) data.UltimaDataEntrada = formatDate(data.UltimaDataEntrada);
-      if (data.dataAtual) data.dataAtual = formatDate(data.dataAtual);
+    // Formatar as datas para dd/mm/yyyy
+    if (data.data) data.data = formatDate(data.data);
+    if (data.UltimaDataEntrada) data.UltimaDataEntrada = formatDate(data.UltimaDataEntrada);
+    if (data.dataAtual) data.dataAtual = formatDate(data.dataAtual);
 
-      // Converter campos de opcionais em texto único
-      data.listaDeopcionaisContratados = $('#listaDeopcionaisContratados').val().join(', ');
-      data.listaDeopcionaisCortesia = $('#listaDeopcionaisCortesia').val().join(', ');
+    // Converter campos de opcionais em texto único, enviando os nomes
+    data.listaDeopcionaisContratados = $('#listaDeopcionaisContratados option:selected').map(function() {
+        return $(this).text();
+    }).get().join(', ');
 
-      try {
+    data.listaDeopcionaisCortesia = $('#listaDeopcionaisCortesia option:selected').map(function() {
+        return $(this).text();
+    }).get().join(', ');
+
+    console.log(data.listaDeopcionaisContratados, data.listaDeopcionaisCortesia);
+
+    try {
         const response = await fetch('https://novo-nome-do-app-ba5a0bbd9a20.herokuapp.com/submit', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
         });
 
         if (response.ok) {
-          alert('Dados enviados com sucesso');
+            alert('Dados enviados com sucesso');
         } else {
-          alert('Falha ao enviar dados');
+            alert('Falha ao enviar dados');
         }
-      } catch (error) {
+    } catch (error) {
         console.error('Erro:', error);
         alert('Erro ao enviar dados');
-      }
-    });
+    }
+});
 
     // Script para preenchimento automático do formulário
     function fillForm(data) {
